@@ -1,1 +1,1 @@
-# secd
+# secd pip package
