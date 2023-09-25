@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "secd_KTHCLOUD"
-version = "0.0.4"
+version = "0.0.5"
 authors = [
   { name="Emil Karlsson", email="emilk2@kth.se" },
   { name="Pierre Le Fevre", email="pierrelf@kth.se" }
