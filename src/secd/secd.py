@@ -3,13 +3,18 @@ import os
 import hashlib
 import inspect
 import yaml
+from dotenv import load_dotenv
 
 def get_cache_dir():
+    load_dotenv()
+    
     with open("secd.yml", "r") as f:
         run_meta = yaml.load(f)
-        if "cache_dir" in run_meta:
-            return run_meta["cache_dir"]
-        
+
+        if "cache_dir" in run_meta and "docker_dir" in run_meta:
+            return os.path.join(run_meta["docker_dir"], "cache")
+    
+    # local development
     return "cache"
 
 CACHE_DIR = get_cache_dir()
