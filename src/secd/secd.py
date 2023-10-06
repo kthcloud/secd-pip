@@ -2,8 +2,17 @@ import pickle
 import os
 import hashlib
 import inspect
+import yaml
 
-CACHE_DIR = "cache"
+def get_cache_dir():
+    with open("secd.yml", "r") as f:
+        run_meta = yaml.load(f)
+        if "cache_dir" in run_meta:
+            return run_meta["cache_dir"]
+        
+    return "cache"
+
+CACHE_DIR = get_cache_dir()
 
 def generate_cache_key(func, args, kwargs):
     # Create a unique cache key based on the function name, args, kwargs, and source code
