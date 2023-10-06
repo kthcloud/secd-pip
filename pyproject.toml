@@ -1,10 +1,10 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling, pyyaml"]
 build-backend = "hatchling.build"
 
 [project]
 name = "secd"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
   { name="Emil Karlsson", email="emilk2@kth.se" },
   { name="Pierre Le Fevre", email="pierrelf@kth.se" }
