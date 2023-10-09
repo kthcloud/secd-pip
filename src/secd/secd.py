@@ -7,14 +7,15 @@ from dotenv import load_dotenv
 
 def get_cache_dir():
     load_dotenv()
-    
-    with open("secd.yml", "r") as f:
-        run_meta = yaml.load(f)
 
-        if "cache_dir" in run_meta and "docker_dir" in run_meta:
-            return os.path.join(run_meta["docker_dir"], "cache")
-    
-    # local development
+    try:
+        if os.environ.get("SECD") == "PRODUCTION":        
+            with open("secd.yml", "r") as f:
+                run_meta = yaml.load(f)
+                if "cache_dir" in run_meta and "mount_path" in run_meta:
+                    return os.path.join(run_meta["mount_path"], "cache")
+    except: 
+        return "cache"
     return "cache"
 
 CACHE_DIR = get_cache_dir()
@@ -57,3 +58,9 @@ def cache(func):
         return result
 
     return wrapper
+
+def get_output_path():
+    if os.environ.get('OUTPUT_PATH'):
+        return os.environ.get('OUTPUT_PATH')
+    else:
+        return 'output'
