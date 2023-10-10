@@ -5,26 +5,30 @@ import inspect
 import yaml
 from dotenv import load_dotenv
 
+
 def get_cache_dir():
     load_dotenv()
 
     try:
-        if os.environ.get("SECD") == "PRODUCTION":        
+        if os.environ.get("SECD") == "PRODUCTION":
             with open("secd.yml", "r") as f:
                 run_meta = yaml.load(f)
                 if "cache_dir" in run_meta and "mount_path" in run_meta:
                     return os.path.join(run_meta["mount_path"], "cache")
-    except: 
+    except:
         return "cache"
     return "cache"
 
+
 CACHE_DIR = get_cache_dir()
+
 
 def generate_cache_key(func, args, kwargs):
     # Create a unique cache key based on the function name, args, kwargs, and source code
     source_code = inspect.getsource(func)
     key = f"{func.__name__}:{args}:{kwargs}:{hashlib.md5(source_code.encode()).hexdigest()}"
     return hashlib.md5(key.encode()).hexdigest()
+
 
 def cache(func):
     def wrapper(*args, **kwargs):
@@ -34,9 +38,10 @@ def cache(func):
         # Generate a cache key based on function name, args, kwargs, and source code hash
         cache_key = generate_cache_key(func, args, kwargs)
         cache_path = os.path.join(CACHE_DIR, cache_key)
-        
+
         # Initialize computed_source_code_hash to None
-        computed_source_code_hash = hashlib.md5(inspect.getsource(func).encode()).hexdigest()
+        computed_source_code_hash = hashlib.md5(
+            inspect.getsource(func).encode()).hexdigest()
 
         if os.path.exists(cache_path):
             # Load the cached result and source code hash
@@ -47,7 +52,8 @@ def cache(func):
                 print(f"Using cached result for {func.__name__}")
                 return result
             else:
-                print(f"Function code has changed; recomputing {func.__name__}")
+                print(
+                    f"Function code has changed; recomputing {func.__name__}")
         else:
             print(f"Cache not found; recomputing {func.__name__}")
 
@@ -59,8 +65,12 @@ def cache(func):
 
     return wrapper
 
+
 def get_output_path():
-    if os.environ.get('OUTPUT_PATH'):
-        return os.environ.get('OUTPUT_PATH')
+    env_path = os.environ.get('OUTPUT_PATH')
+    if env_path:
+        os.makedirs(env_path, exist_ok=True)
+        return env_path
     else:
+        os.makedirs('output', exist_ok=True)
         return 'output'
